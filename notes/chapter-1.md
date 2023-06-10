@@ -1,4 +1,6 @@
 
+
+
 # Summary
 ## Syntax
 - **Components** are declared using **JSX syntax**. Example:
@@ -22,6 +24,44 @@
 ## Other
 - **React component names** must begin with a capital letter. Otherwise, it will be treated as a DOM element. (E.g. `<div>` VS `<Alert>`)
 - **`ReactDOM.createRoot`** allows a React component tree to be rendered inside a DOM element.
+
+# Details
+## JSX Transpilation Example
+Suppose this JSX example.
+```jsx
+<div className="title">
+    <span> Hello World! </span>
+</div>
+```
+This JSX will transpile into the following code.
+```js
+React.createElement(
+    "div",
+    {className: "title"},
+
+    React.createElement(
+        "span",
+        null,
+        "Hello World!"
+    )
+)
+```
+## React Entry Point
+```jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+
+const rootElement = document.getElementById('root')
+const root = createRoot(rootElement)
+
+root.render(
+    <StrictMode>
+        <App />
+    </StrictMode>
+)
+```
+
 # Questions
 ## Question 1
 What is wrong with the following component definition?
