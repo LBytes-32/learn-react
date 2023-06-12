@@ -1,6 +1,3 @@
-
-
-
 # Summary
 ## Syntax
 - **Components** are declared using **JSX syntax**. Example:
