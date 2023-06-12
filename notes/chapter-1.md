@@ -26,7 +26,11 @@
 - **`ReactDOM.createRoot`** allows a React component tree to be rendered inside a DOM element.
 
 # Details
-## JSX Transpilation Example
+## JSX Transpilation
+- Plain text between tags are **evaluated as literal text**.
+- Text enclosed in `{`braces`}` are **evaluated as expressions**.
+
+## Plain Text Syntax Example
 Suppose this JSX example.
 ```jsx
 <div className="title">
@@ -46,6 +50,30 @@ React.createElement(
     )
 )
 ```
+
+## Braces Syntax Example
+Suppose this JSX example.
+```jsx
+const title = "Hello World!"
+<div className="title">
+    <span>{title}</span>
+</div>
+```
+This JSX will transpile into the following code.
+```jsx
+const title = "Hello World!"
+React.createElement(
+    "div",
+    {className: "title"},
+    
+    React.createElement(
+        "span",
+        null,
+        title
+    )
+)
+```
+
 ## React Entry Point
 ```jsx
 import { StrictMode } from 'react'
@@ -139,7 +167,7 @@ export function Agree({ onAgree }) {
     function handleClick() {
         onAgree()
     }
-
+    
     return (
         <button onClick={handleClick}>
             Click to agree
