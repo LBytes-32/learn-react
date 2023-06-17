@@ -1,0 +1,35 @@
+
+.alert-base {
+    display: flexbox;
+    width: 30%;
+    height: 30px;
+    user-select: none;
+}
+
+.alert-header {
+    background: rgb(118, 144, 171);
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+    font-size: 10pt;
+    
+    border: solid;
+    border-color: rgb(0, 0, 101);
+    border-width: 1px;
+    border-radius: 4px 4px 0px 0px;
+    border-bottom-width: 0px;
+    color: white;
+}
+
+.alert-content {
+    background: rgb(255, 255, 255);
+    display: flex;
+    padding: 5px;
+    
+    font-size: 10pt;
+    border: solid;
+    border-width: 1px;
+    border-top-width: 0px;
+    border-radius: 0px 0px 4px 4px;
+    border-color: rgb(77, 77, 77);
+}
