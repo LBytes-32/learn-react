@@ -41,7 +41,7 @@ export function Alert({type="information", heading, children, closable, onClose}
     }
     
     // Return the "hidden" element if not visible
-    if (!visible)
+    if (!visible) {
         return (
             <div>
                 <span> Hidden! </span>
@@ -51,27 +51,44 @@ export function Alert({type="information", heading, children, closable, onClose}
                 </button>
             </div>
         )
-        
+    }    
     // Return the "alert box" element if visible
-    else
+    else {
+        
+        // Icon that represents "warning" or "information"
+        let icon = (
+            <span role="img" aria-label={type === "warning" ? "Warning" : "Information"}>
+                {type === "warning" ? "⚠" : "ℹ️"}
+            </span>
+        )
+        
+        // Close button is only visible if it is "closable"
+        let closeButton = (
+            <>
+                {closable && (
+                    <button aria-label="Close" onClick={handleCloseClick}>
+                        <span role="img" aria-label="Close"> ❌ </span>
+                    </button>
+                )}
+            </>
+        )
+        
+        // Return the alert box.
         return (
             <div className={css['alert-base']}>
+                
                 <div className={css['alert-header']}>
-                    <span role="img" aria-label={type === "warning" ? "Warning" : "Information"}>
-                        {type === "warning" ? "⚠" : "ℹ️"}
-                    </span>
-                    
+                    {icon}
                     <span> {heading} </span>
-                    
-                    {closable && (
-                        <button aria-label="Close" onClick={handleCloseClick}>
-                            <span role="img" aria-label="Close"> ❌ </span>
-                        </button>
-                    )}
+                    {closeButton}
                 </div>
                 
-                <div className={css['alert-content']}>{children}</div>
+                <div className={css['alert-content']}>
+                    {children}
+                </div>
+                
             </div>
         )
+    }
 }
 
