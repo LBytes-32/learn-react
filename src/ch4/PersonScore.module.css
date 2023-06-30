@@ -1,0 +1,31 @@
+
+.loading {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: rgb(169, 210, 200);
+}
+
+.ButtonLayout {
+    display: flex;
+    justify-content: center;
+}
+
+.Button {
+    padding: 20px 30px;
+    border: none;
+}
+
+.ButtonLeft {
+    border-radius: 5px 0px 0px 5px;
+}
+
+.ButtonRight {
+    border-radius: 0px 5px 5px 0px;
+}

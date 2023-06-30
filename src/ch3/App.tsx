@@ -1,6 +1,6 @@
 import { Alert } from './Alert'
 
-export function App() {
+function App() {
     
     // "closable" is a boolean.
     // You may specify it to represent "true"
@@ -15,3 +15,4 @@ export function App() {
     )
 }
 
+export default App;
