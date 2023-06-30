@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { getPerson } from './getPerson';
 import css from "./PersonScore.module.css";
 
@@ -61,6 +61,9 @@ function PersonScore() {
         loading: true
     });
     
+    // Create a hook to eventually reference the '+' button. (Will reference an HTMLButtonElement)
+    const addButtonRef = useRef<HTMLButtonElement>(null);
+    
     /*  You may notice the effect has been executed twice, according to the console.
         This happens when running development mode + react strict mode.
         Documented at https://reactjs.org/blog/2022/03/29/react-v18.html#new-strict-mode-behaviors.
@@ -80,29 +83,53 @@ function PersonScore() {
                     They are batched and updated before the next render.
                     It isn't until the NEXT RENDER, where these changes take effect.
             */ 
-            console.warn("Is loading?", loading, "\nThe name:  ", name);
+            console.log("Is loading?", loading, "\nThe name:  ", name);
         });
     }, []);
+    
+    // Focus the '+' button when finished loading.
+    // This could be combined with the first useEffect, but this tightens coupling.
+    useEffect(() => {
+        if (!loading) {
+            addButtonRef.current?.focus();
+        }
+    }, [loading]);
     
     // If loading, then say so.
     if (loading) {
         return (<div className={css.Loading}> Loading... </div>);
     }
     
-    // Unnecessary detail of making the name possessive.
-    let namePossessive = name + "'" + (name?.slice(-1).toUpperCase() !== "S" ? "s" : "");
+    // Fun detail of making the name possessive.
+    let namePossessive = name + (name?.slice(-1).toUpperCase() !== "S" ? "'s" : "'");
     
     // Once loaded, display the name and score.
     return (
-        <div>
+        <>
             <h3 className={css.header}> {namePossessive} Score: {score} </h3>
             
             <div className={css.ButtonLayout}>
-                <button className={css.Button + ' ' + css.ButtonLeft} onClick={() => dispatch({ type: 'increment' })}>   +   </button>
-                <button className={css.Button} onClick={() => dispatch({ type: 'decrement' })}>   -   </button>
-                <button className={css.Button + ' ' + css.ButtonRight} onClick={() => dispatch({ type: 'reset'     })}> Reset </button>
+                { /* "ref" will be associated with "addButtonRef" */ }
+                <button
+                    className = { css.Button + ' ' + css.ButtonLeft }
+                    onClick   = { () => dispatch({ type: 'increment' }) }
+                    ref       = { addButtonRef }>
+                    +  
+                </button>
+                    
+                <button
+                    className = { css.Button }
+                    onClick   = { () => dispatch({ type: 'decrement' }) }>
+                    -
+                </button>
+                
+                <button
+                    className = { css.Button + ' ' + css.ButtonRight }
+                    onClick   = { () => dispatch({ type: 'reset' }) }>
+                    Reset
+                </button>
             </div>
-        </div>
+        </>
     );
 }
 
