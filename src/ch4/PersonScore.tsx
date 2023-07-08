@@ -1,5 +1,6 @@
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { getPerson } from './getPerson';
+import Reset from './Reset';
 import css from "./PersonScore.module.css";
 
 /*  This version uses the Reducer Hook.
@@ -18,7 +19,8 @@ type State = {
 type Action = | { type: 'initialize', name: string }
               | { type: 'increment' }
               | { type: 'decrement' }
-              | { type: 'reset' };
+              | { type: 'reset' }
+              | { type: 'loading' }
 
 function reducer(state: State, action: Action): State {
     
@@ -47,22 +49,59 @@ function reducer(state: State, action: Action): State {
                 ...state,
                 score: 0
             };
+
+        case 'loading':
+            return {
+                ...state,
+                loading: true
+            };
     }
     
 }
 
 
 
-function PersonScore() {
+
+function expensiveCalculation(): number {
+
+    const start = new Date()
+
+    console.warn("Expensive function invoked.");
+    let sum = 0;
     
+    for (let i=1; i<10000000; i++) {
+        sum += Math.sqrt(i) + Math.random();
+    }
+    
+    console.warn("Expensive function complete.");
+
+    const end = new Date()
+
+    console.log('expensive = ', end.getTime() - start.getTime())
+    return sum;
+}
+
+
+type TPersonScoreProps = {
+    person?: string
+}
+
+
+function PersonScore({person}: TPersonScoreProps) {
+
+    console.log('person score called with', person)
+    
+    // Initialize state
     const [{ name, score, loading }, dispatch] = useReducer(reducer, {
-        name: undefined,
-        score: 0,
-        loading: true
+        name    : undefined,
+        score   : 0,
+        loading : true
     });
     
     // Create a hook to eventually reference the '+' button. (Will reference an HTMLButtonElement)
-    const addButtonRef = useRef<HTMLButtonElement>(null);
+    const ref = {
+        addButton: useRef<HTMLButtonElement>(null)
+    }
     
     /*  You may notice the effect has been executed twice, according to the console.
         This happens when running development mode + react strict mode.
@@ -71,7 +110,8 @@ function PersonScore() {
     
     // Fetch and log the person object. This effect does not depend on other variables.
     useEffect(() => {
-        getPerson().then((person) => {
+        dispatch({type: 'loading'})
+        getPerson(person).then((person) => {
             dispatch({ type: 'initialize', name: person.name })
             
             /*  ODDITY:
@@ -85,19 +125,24 @@ function PersonScore() {
             */ 
             console.log("Is loading?", loading, "\nThe name:  ", name);
         });
-    }, []);
+    }, [person]);
     
     // Focus the '+' button when finished loading.
     // This could be combined with the first useEffect, but this tightens coupling.
     useEffect(() => {
         if (!loading) {
-            addButtonRef.current?.focus();
+            ref.addButton.current?.focus();
         }
     }, [loading]);
     
+    const expensiveSum = useMemo(
+        () => expensiveCalculation(),
+        []
+    )
+    
     // If loading, then say so.
     if (loading) {
-        return (<div className={css.Loading}> Loading... </div>);
+        return (<div className={css.Loading}> Pending... </div>);
     }
     
     // Fun detail of making the name possessive.
@@ -106,17 +151,19 @@ function PersonScore() {
     // Once loaded, display the name and score.
     return (
         <>
+            <div className={css.Note}> Expensive Calculation = </div> { expensiveSum }
+            
             <h3 className={css.header}> {namePossessive} Score: {score} </h3>
             
             <div className={css.ButtonLayout}>
-                { /* "ref" will be associated with "addButtonRef" */ }
+                { /* "ref" will be associated with "ref.addButton" */ }
                 <button
                     className = { css.Button + ' ' + css.ButtonLeft }
                     onClick   = { () => dispatch({ type: 'increment' }) }
-                    ref       = { addButtonRef }>
+                    ref       = { ref.addButton }>
                     +  
                 </button>
-                    
+                
                 <button
                     className = { css.Button }
                     onClick   = { () => dispatch({ type: 'decrement' }) }>
@@ -129,6 +176,8 @@ function PersonScore() {
                     Reset
                 </button>
             </div>
+            
+            <Reset onClick={() => dispatch({ type: 'reset' })} />
         </>
     );
 }

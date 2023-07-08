@@ -6,10 +6,33 @@ interface Person {
     age  : number
 }
 
-export function getPerson(): Promise<Person> {
+
+const personMap = new Map<string, {name: string, age: number}>()
+
+
+export function getPerson(name?: string): Promise<Person> {
     
     // This function asynchronously returns a Person, after a second has elapsed.
     return new Promise((resolve) => {
-        setTimeout(() => resolve({ name: "Bob", age: 43 }), 1500)
+        
+        setTimeout(() => 
+        {
+            if (name !== undefined) {
+                const person = personMap.get(name)
+                
+                if(person !== undefined) {
+                    resolve(person)
+                } else {
+                    personMap.set(name, {name: name, age: 20})
+                    resolve({name: name, age: 20})
+                }
+            }
+        }
+        , 100)
+        //resolve({ name: "Bob", age: 43 })
     })
 }
+
+
+
+

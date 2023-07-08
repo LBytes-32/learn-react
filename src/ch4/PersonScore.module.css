@@ -12,6 +12,12 @@
     background-color: rgb(169, 210, 200);
 }
 
+.Note {
+    font-size: 9pt;
+    padding-top: 8px;
+    color: gray;
+}
+
 .ButtonLayout {
     display: flex;
     justify-content: center;
@@ -22,10 +28,26 @@
     border: none;
 }
 
+.Button:focus {
+    outline:solid;
+    outline-color: rgba(0, 0, 0, 0.358);
+    outline-width: 1px;
+    outline-offset: -1px;
+}
+
 .ButtonLeft {
     border-radius: 5px 0px 0px 5px;
 }
 
 .ButtonRight {
     border-radius: 0px 5px 5px 0px;
+    background-color: rgb(255, 180, 180);
+}
+
+.ButtonRight:hover {
+    background-color: rgb(255, 149, 149);
+}
+
+.ButtonRight:active {
+    background-color: rgb(255, 80, 80);
 }
