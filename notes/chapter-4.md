@@ -88,3 +88,130 @@ function MyComponent({ onMyClick }) {
 - Used to "memoize" **functions**.
 - Used for performance optimization.
 
+# Questions
+## Question 1
+The following component renders some text for 5 seconds. Why is this problematic?
+```tsx
+export function TextVanish({ text }: Props) {
+    if (!text)
+        return null
+    
+    const [textToRender, setTextToRender] = useState(text)
+    
+    useEffect(() => {
+        setTimeout(() => setTextToRender(""), 5000)
+    }, [])
+    
+    return <span>{textToRender}</span>
+}
+```
+> The `useState` and `useEffect` hooks must be declared at the top level.
+
+## Question 2
+The following code is a snippet from a React component that fetches some data and stores it in state.
+
+There are several problems with this code. What are they?
+
+```tsx
+const [data, setData] = useState([])
+
+useEffect(async () => {
+    const data = await getData()
+    setData(data)
+})
+```
+> `useEffect` does not support async functions. `data` is also ambiguous.
+
+## Question 3
+How many times will the following component re-render in production mode when the button is clicked?
+
+What will the button content be after one click?
+
+```tsx
+export function Counter() {
+    const [count, setCount] = useState(0);
+    
+    return (
+        <button onClick={() => {
+                setCount(count + 1);
+                setCount(count + 1);
+                setCount(count + 1);
+            }}>
+            {count}
+        </button>
+    )
+}
+```
+> It will re-render 3 times. `count` will be `1`, since the value of `count` isn't updated immediately after each `setCount`.
+
+## Question 4
+How many times will the following component re-render in production mode when the button is clicked?
+
+What will the button content be after one click?
+
+```tsx
+export function CounterRef() {
+    const count = useRef(0)
+    
+    return (
+        <button
+            onClick={() => {
+                count.current = count.current + 1;
+            }}>
+            {count.current}
+        </button>
+    );
+}
+```
+> It will re-render zero times. The button content will remain as `0`. (Reference hooks do not cause a re-render).
+
+## Question 5
+Consider the following `reducer` function.
+
+```tsx
+type State = {
+    steps: number
+}
+
+type Action = 
+    | { type: 'forward' steps: number }
+    | { type: 'backwards' steps: number }
+
+function reducer(state: State, action: Action): State {
+    switch (action.type) {
+        case 'forward':
+            return { ...state,
+                steps: state.steps + action.steps
+            }
+            
+        case 'backwards':
+            return { ...state,
+                steps: state.steps - action.steps
+            }
+            
+        default:
+            return state
+    }
+}
+```
+
+What will the type of the `action` parameter be narrowed down to in the `"backwards"` switch branch?
+
+> ?
+
+## Question 6
+Consider the following `Counter` component.
+```tsx
+export function Counter() {
+    const [count, setCount] = useState(0);
+    const memoCount = useMemo(() => count, []);
+    
+    return (
+        <div>
+            <button onClick={() => setCount(count + 1)}>
+                {memoCount}
+            </button>
+        </div>
+    )
+}
+```
